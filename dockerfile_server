@@ -1,0 +1,73 @@
+ARG PHP_VERSION=8
+
+FROM php:${PHP_VERSION}-apache
+
+RUN apt-get update
+
+RUN apt install -y \
+	zip \
+	unzip \
+	sudo \
+	wget \
+	git \
+	vim \
+	zsh \
+	htop \
+	rsyslog
+
+RUN apt-get update -y && apt-get install -y libpng-dev
+
+RUN apt-get update && \
+    apt-get install -y \
+        zlib1g-dev
+
+RUN docker-php-ext-install gd
+
+RUN a2enmod rewrite
+
+RUN useradd -m mathieu && echo "mathieu:mathieu" | chpasswd && adduser mathieu sudo;
+
+RUN echo "mathieu     ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+
+RUN apt-get install -y libpq-dev
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
+
+RUN apt-get install -y librabbitmq-dev && pecl install amqp && docker-php-ext-enable amqp
+
+RUN chsh --shell /bin/zsh
+
+USER mathieu
+
+RUN sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+RUN curl https://raw.githubusercontent.com/reversTeam/Sublivim/master/installer.sh | sh
+
+USER root
+
+# install xdebug
+#RUN pecl install xdebug-3.1.5
+#RUN docker-php-ext-enable xdebug
+#RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#RUN echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+RUN docker-php-ext-install opcache
+RUN docker-php-ext-enable opcache
+
+
+#RUN
+
+WORKDIR /home/mathieu/src
+VOLUME /home/mathieu/src
+VOLUME /usr/local/etc/php
+
+ENTRYPOINT /bin/sh /start/start.sh
+
+
+EXPOSE 80
+EXPOSE 443
+
+                                                                                                                                                                             
+mathieu@mathieu-XPS-15-9560 ~/monujo/monujo-server/Dockerfiles

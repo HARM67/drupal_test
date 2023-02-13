@@ -1,0 +1,44 @@
+php:
+    stdin_open: true
+    tty: true
+    ports:
+     - ${SERVER_PORT}:80
+    working_dir: /home/teamdev/src
+    build:
+      dockerfile: dockerfile_server
+    environment:
+      - TZ='Europe/Paris'
+      - PHP_IDE_CONFIG=serverName=mscpi.lan
+      - XDEBUG_CONFIG=client_host=172.20.0.1 remote_port=90003
+    volumes:
+      - ../monujo-server:/home/teamdev/src
+      - ./php/dev/php:/usr/local/etc/php
+      - ./php/dev/apache2/:/etc/apache2/
+      - ./php/dev/start/:/start/
+    networks:
+      db-ip:
+        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.3
+
+  postgres:
+    image: postgres:14.0
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: teamdev
+      TZ: 'GMT+2'
+      PGTZ: 'GMT+2'
+    volumes:
+      - ./postgres2/data/:/var/lib/postgresql/data
+      - ./postgres/config/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    networks:
+      db-ip:
+        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.9
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      db-ip:
+        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.11
+
