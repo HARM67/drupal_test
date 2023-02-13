@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+
+  web-admin:
+    build:
+      context: ../monujo-web/Dockerfiles/
+      dockerfile: devAdmin
+    volumes:
+      - ../monujo-web/:/home/node/src:rw
+    ports:
+      - ${WEB_ADMIN_PORT}:8081
+      - ${WEB_ADMIN_SSL_PORT}:8082
+    networks:
+      db-ip:
+        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.2
