@@ -63,11 +63,10 @@ WORKDIR /home/mathieu/src
 VOLUME /home/mathieu/src
 VOLUME /usr/local/etc/php
 
-ENTRYPOINT /bin/sh /start/start.sh
+#ENTRYPOINT /bin/sh /start/start.sh
+ENTRYPOINT /usr/local/bin/docker-php-entrypoint apache2-foreground
 
 
 EXPOSE 80
 EXPOSE 443
 
-                                                                                                                                                                             
-mathieu@mathieu-XPS-15-9560 ~/monujo/monujo-server/Dockerfiles
