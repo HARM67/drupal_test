@@ -15,13 +15,17 @@ RUN apt install -y \
 	htop \
 	rsyslog
 
+RUN apt-get update && \
+apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev
+
 RUN apt-get update -y && apt-get install -y libpng-dev
 
 RUN apt-get update && \
     apt-get install -y \
         zlib1g-dev
 
-RUN docker-php-ext-install gd
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
+docker-php-ext-install gd
 
 RUN a2enmod rewrite
 

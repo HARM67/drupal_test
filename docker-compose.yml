@@ -17,38 +17,39 @@ services:
       - XDEBUG_CONFIG=client_host=172.20.0.1 remote_port=90003
     volumes:
       - ./app:/home/mathieu/src
-      #- ./php/dev/php:/usr/local/etc/php
       - ./services/app/apache2/:/etc/apache2/
-      #- ./php/dev/start/:/start/
     networks:
       db-ip:
         ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.3
 
-#  postgres:
-#    image: postgres:14.0
-#    restart: always
-#    environment:
-#      POSTGRES_PASSWORD: example
-#      POSTGRES_USER: teamdev
-#      TZ: 'GMT+2'
-#      PGTZ: 'GMT+2'
-#    volumes:
-#      - ./postgres2/data/:/var/lib/postgresql/data
-#      - ./postgres/config/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
-#    networks:
-#      db-ip:
-#        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.9
-#
-#  redis:
-#    image: redis:7
-#    ports:
-#      - "6379:6379"
-#    networks:
-#      db-ip:
-#        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.11
+  postgres:
+    image: postgres:14.0
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: drupal_password
+      POSTGRES_USER: drupal
+      TZ: 'GMT+2'
+      PGTZ: 'GMT+2'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      db-ip:
+        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.9
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      db-ip:
+        ipv4_address: 172.20.${WEB_SERVER_IP_CHANNEL}.11
 
 networks:
    db-ip:
        ipam:
            config:
              - subnet: 172.20.0.0/16
+
+volumes:
+   db-data:
+
